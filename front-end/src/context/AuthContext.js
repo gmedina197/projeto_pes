@@ -1,10 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
+import { makeLogin } from "../utils/calls";
 
 const AuthContext = React.createContext();
 
 function AuthProvider({ user, children }) {
+  const [authInfo, setAuthInfo] = useState({ user });
+
+  const signIn = async (email, password) => {
+    try {
+      const res = await makeLogin(email, password);
+
+      setAuthInfo(res);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ currentUser: user }}>
+    <AuthContext.Provider
+      value={{ currentUser: authInfo.user, signed: Boolean(authInfo), signIn }}
+    >
       {children}
     </AuthContext.Provider>
   );

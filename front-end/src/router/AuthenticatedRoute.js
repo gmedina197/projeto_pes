@@ -3,16 +3,16 @@ import { Redirect, Route, useLocation } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 
-function AuthenticatedRoute({ path, component, ...rest }) {
+function AuthenticatedRoute({ path, component: Component, ...rest }) {
   const { pathname } = useLocation();
-  const { currentUser } = useAuth();
+  const { signed } = useAuth();
 
   return (
     <Route
       path={path}
       render={() =>
-        currentUser ? (
-          component
+        signed ? (
+          <Component {...rest} />
         ) : (
           <Redirect
             to={{

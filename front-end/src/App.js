@@ -4,10 +4,10 @@ import Router from "./router";
 import { AuthProvider } from "./context/AuthContext";
 
 function App() {
-  const user = sessionStorage.getItem("user");
+  const user = localStorage.getItem("user");
 
   return (
-    <AuthProvider user={user}>
+    <AuthProvider user={JSON.parse(user)}>
       <Router />
     </AuthProvider>
   );

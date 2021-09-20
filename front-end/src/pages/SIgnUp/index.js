@@ -1,39 +1,34 @@
-import React, { useState } from "react";
-import { Form, Input, Button, Row, Alert, Divider } from "antd";
+import React from "react";
+import { Form, Input, Button, Row, notification } from "antd";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { useAuth } from "../../context/AuthContext";
+import { createUser } from "../../utils/calls";
 
 const Box = styled.div`
   background-color: white;
   text-align: center;
 `;
 
-const Login = () => {
+function SignUp() {
   const history = useHistory();
 
-  const { signIn } = useAuth();
-
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const onFinish = async (values) => {
-    setLoading(true);
+  const onFinish = async ({ name, email, password }) => {
     try {
-      await signIn(values.email, values.password);
+      await createUser(name, email, password);
 
-      setLoading(false);
+      notification.success({
+        message: "User created sucessfully!",
+      });
 
-      history.push("/home");
+      setTimeout(() => {
+        history.push("/login");
+      }, 1000);
     } catch (error) {
-      console.log(error)
-      setError(true);
-      setLoading(false);
+      console.log(error);
+      notification.error({
+        message: "Error while trying to create an user!",
+      });
     }
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
   };
 
   return (
@@ -44,14 +39,7 @@ const Login = () => {
       style={{ minHeight: "100vh" }}
     >
       <Box>
-        <h3 style={{ margin: "5px" }}>LOGIN</h3>
-
-        {error && (
-          <Alert
-            message={"Your authentication information is incorrect."}
-            type="error"
-          />
-        )}
+        <h3 style={{ margin: "5px" }}>SIGNUP</h3>
 
         <Form
           name="basic"
@@ -59,10 +47,17 @@ const Login = () => {
           wrapperCol={{ span: 24 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
           style={{ margin: "2rem" }}
         >
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: "Please input your name!" }]}
+          >
+            <Input />
+          </Form.Item>
+
           <Form.Item
             label="Email"
             name="email"
@@ -86,19 +81,14 @@ const Login = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={loading}>
-              Submit
+            <Button type="primary" htmlType="submit" block>
+              Create User
             </Button>
           </Form.Item>
-          <Divider plain>Or</Divider>
-
-          <Button type="primary" block onClick={() => history.push("/sign-up")}>
-            Sign Up
-          </Button>
         </Form>
       </Box>
     </Row>
   );
-};
+}
 
-export default Login;
+export default SignUp;

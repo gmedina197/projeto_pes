@@ -2,6 +2,7 @@ import React from "react";
 import { Redirect, Route, useLocation } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import DesktopNavbar from "./Header";
 
 function AuthenticatedRoute({ path, component: Component, ...rest }) {
   const { pathname } = useLocation();
@@ -12,7 +13,10 @@ function AuthenticatedRoute({ path, component: Component, ...rest }) {
       path={path}
       render={() =>
         signed ? (
-          <Component {...rest} />
+          <React.Fragment>
+            <DesktopNavbar />
+            <Component {...rest} />
+          </React.Fragment>
         ) : (
           <Redirect
             to={{

@@ -18,7 +18,11 @@ function AuthProvider({ user, children }) {
 
   return (
     <AuthContext.Provider
-      value={{ currentUser: authInfo.user, signed: Boolean(authInfo), signIn }}
+      value={{
+        currentUser: authInfo.user,
+        signed: Boolean(authInfo.user),
+        signIn,
+      }}
     >
       {children}
     </AuthContext.Provider>

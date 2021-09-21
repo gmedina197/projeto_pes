@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, Product } = require("../models");
 
 class UserController {
   async save(req, res) {
@@ -28,9 +28,75 @@ class UserController {
 
   async list(req, res) {
     try {
-      const users = await User.findAll();
+      const users = await User.findAll({
+        include: ["products"],
+      });
+
+      console.log(users);
 
       return res.json(users.map((u) => u.toJSON()));
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: error });
+    }
+  }
+
+  async get(req, res) {
+    try {
+      const user = await User.findOne({
+        where: { id: req.params.userId },
+        include: ["products"],
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User does not exist." });
+      }
+
+      return res.json(user.toJSON());
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: error });
+    }
+  }
+
+  async delete(req, res) {
+    try {
+      const user = await User.findOne({
+        where: { id: req.params.userId },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User does not exist." });
+      }
+
+      await user.destroy();
+
+      return res.json(user.toJSON());
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: error });
+    }
+  }
+
+  async update(req, res) {
+    try {
+      let user = await User.findOne({
+        where: { id: req.params.userId },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User does not exist." });
+      }
+
+      await User.update(req.body, {
+        where: { id: req.params.userId },
+      });
+
+      user = await User.findOne({
+        where: { id: req.params.userId },
+      });
+
+      return res.json(user.toJSON());
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: error });

@@ -3,6 +3,10 @@ const { User } = require("../models");
 class SessionController {
   async store(req, res) {
     const { email, password } = req.body;
+    
+    if (!email || !password) {
+      return res.status(401).json({ message: "Incorrect information" });
+    }
 
     const user = await User.findOne({ where: { email } });
 
